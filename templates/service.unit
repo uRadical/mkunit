@@ -1,0 +1,44 @@
+[Unit]
+Description={{description}}
+{{#if after}}
+After={{after}}
+{{/if}}
+{{#if wants}}
+Wants={{wants}}
+{{/if}}
+{{#if requires}}
+Requires={{requires}}
+{{/if}}
+
+[Service]
+Type={{service_type}}
+ExecStart={{exec}}
+{{#if workdir}}
+WorkingDirectory={{workdir}}
+{{/if}}
+{{#if user}}
+User={{user}}
+{{/if}}
+{{#if group}}
+Group={{group}}
+{{/if}}
+Restart={{restart}}
+RestartSec={{restart_sec}}
+{{#each env}}
+Environment="{{this}}"
+{{/each}}
+{{#if env_file}}
+EnvironmentFile={{env_file}}
+{{/if}}
+{{#if hardening}}
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+{{/if}}
+
+[Install]
+WantedBy={{wanted_by}}

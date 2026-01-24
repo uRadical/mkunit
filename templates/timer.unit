@@ -1,0 +1,32 @@
+[Unit]
+Description={{description}}
+
+[Timer]
+{{#if on_calendar}}
+OnCalendar={{on_calendar}}
+{{/if}}
+{{#if on_boot}}
+OnBootSec={{on_boot}}
+{{/if}}
+{{#if on_startup}}
+OnStartupSec={{on_startup}}
+{{/if}}
+{{#if on_active}}
+OnActiveSec={{on_active}}
+{{/if}}
+{{#if on_unit_active}}
+OnUnitActiveSec={{on_unit_active}}
+{{/if}}
+{{#if on_unit_inactive}}
+OnUnitInactiveSec={{on_unit_inactive}}
+{{/if}}
+{{#if persistent}}
+Persistent=true
+{{/if}}
+{{#if randomize_delay}}
+RandomizedDelaySec={{randomize_delay}}
+{{/if}}
+Unit={{unit}}
+
+[Install]
+WantedBy={{wanted_by}}

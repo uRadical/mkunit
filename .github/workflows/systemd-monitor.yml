@@ -1,0 +1,98 @@
+name: Systemd Monitor
+
+on:
+  schedule:
+    # Run weekly on Monday at 9:00 UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  check-systemd-release:
+    name: Check for new systemd releases
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get current minimum version
+        id: current
+        run: |
+          VERSION=$(grep -oP 'MIN_SYSTEMD_VERSION:\s*u32\s*=\s*\K\d+' src/systemd/version.rs)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check latest systemd release
+        id: latest
+        run: |
+          LATEST=$(curl -s https://api.github.com/repos/systemd/systemd/releases/latest | jq -r '.tag_name' | tr -d 'v')
+          echo "version=$LATEST" >> $GITHUB_OUTPUT
+
+      - name: Check for feature updates
+        id: features
+        run: |
+          # Fetch NEWS file and check for notable features since our minimum version
+          curl -sL "https://raw.githubusercontent.com/systemd/systemd/main/NEWS" -o NEWS
+
+          # Extract features from recent versions
+          FEATURES=$(awk '/^systemd [0-9]+/{v=$2} v>${{ steps.current.outputs.version }} && /^\s+\*/{print v": "$0}' NEWS | head -20)
+
+          if [ -n "$FEATURES" ]; then
+            echo "has_features=true" >> $GITHUB_OUTPUT
+            echo "features<<EOF" >> $GITHUB_OUTPUT
+            echo "$FEATURES" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "has_features=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create issue if updates available
+        if: steps.features.outputs.has_features == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `Systemd updates available (latest: v${{ steps.latest.outputs.version }})`;
+
+            // Check if issue already exists
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'systemd-update'
+            });
+
+            const existingIssue = issues.data.find(i => i.title.includes('Systemd updates available'));
+
+            if (existingIssue) {
+              console.log('Issue already exists:', existingIssue.number);
+              return;
+            }
+
+            const body = `## Systemd Update Check
+
+            **Current minimum version:** ${{ steps.current.outputs.version }}
+            **Latest systemd release:** ${{ steps.latest.outputs.version }}
+
+            ### Notable features since v${{ steps.current.outputs.version }}:
+
+            \`\`\`
+            ${{ steps.features.outputs.features }}
+            \`\`\`
+
+            ### Action items:
+
+            - [ ] Review new features for potential mkunit enhancements
+            - [ ] Check if minimum version should be updated
+            - [ ] Update templates if new directives are commonly useful
+            - [ ] Update documentation if needed
+
+            ---
+            *This issue was automatically created by the systemd-monitor workflow.*`;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['systemd-update', 'enhancement']
+            });

@@ -1,0 +1,26 @@
+[Unit]
+Description={{description}}
+
+[Path]
+{{#if path_exists}}
+PathExists={{path_exists}}
+{{/if}}
+{{#if path_exists_glob}}
+PathExistsGlob={{path_exists_glob}}
+{{/if}}
+{{#if path_changed}}
+PathChanged={{path_changed}}
+{{/if}}
+{{#if path_modified}}
+PathModified={{path_modified}}
+{{/if}}
+{{#if directory_not_empty}}
+DirectoryNotEmpty={{directory_not_empty}}
+{{/if}}
+{{#if make_directory}}
+MakeDirectory=true
+{{/if}}
+Unit={{unit}}
+
+[Install]
+WantedBy={{wanted_by}}
