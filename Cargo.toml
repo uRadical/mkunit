@@ -1,0 +1,47 @@
+[package]
+name = "mkunit"
+version = "0.1.0-beta.1"
+edition = "2021"
+authors = ["Alan"]
+description = "A CLI tool for generating systemd unit files"
+license = "MIT"
+repository = "https://github.com/uradical/mkunit"
+keywords = ["systemd", "service", "cli", "unit", "linux"]
+categories = ["command-line-utilities", "development-tools"]
+rust-version = "1.93"
+
+[dependencies]
+clap = { version = "4", features = ["derive", "env"] }
+clap_complete = "4"
+clap_mangen = "0.2"
+handlebars = "6"
+dialoguer = "0.12"
+env_logger = "0.11"
+log = "0.4"
+thiserror = "2"
+colored = "3"
+serde = { version = "1", features = ["derive"] }
+
+[dev-dependencies]
+assert_cmd = "2"
+predicates = "3"
+insta = "1"
+tempfile = "3"
+
+[build-dependencies]
+clap = { version = "4", features = ["derive"] }
+clap_mangen = "0.2"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+all = "warn"
+pedantic = "warn"
+
+[package.metadata.cargo-machete]
+ignored = ["clap_mangen"]
+
+[[bin]]
+name = "mkunit"
+path = "src/main.rs"

@@ -1,0 +1,15 @@
+[Unit]
+Description={{description}}
+
+[Mount]
+What={{what}}
+Where={{where}}
+{{#if fs_type}}
+Type={{fs_type}}
+{{/if}}
+{{#if options}}
+Options={{options}}
+{{/if}}
+
+[Install]
+WantedBy={{wanted_by}}

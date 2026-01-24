@@ -1,0 +1,14 @@
+[Unit]
+Description={{description}}
+{{#if wants}}
+Wants={{wants}}
+{{/if}}
+{{#if requires}}
+Requires={{requires}}
+{{/if}}
+{{#if after}}
+After={{after}}
+{{/if}}
+
+[Install]
+WantedBy={{wanted_by}}

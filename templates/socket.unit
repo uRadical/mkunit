@@ -1,0 +1,25 @@
+[Unit]
+Description={{description}}
+
+[Socket]
+{{#if listen_stream}}
+ListenStream={{listen_stream}}
+{{/if}}
+{{#if listen_datagram}}
+ListenDatagram={{listen_datagram}}
+{{/if}}
+{{#if listen_fifo}}
+ListenFIFO={{listen_fifo}}
+{{/if}}
+{{#if accept}}
+Accept=true
+{{/if}}
+{{#if max_connections}}
+MaxConnections={{max_connections}}
+{{/if}}
+{{#if unit}}
+Service={{unit}}
+{{/if}}
+
+[Install]
+WantedBy=sockets.target
