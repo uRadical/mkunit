@@ -14,7 +14,7 @@ rust-version = "1.70"
 clap = { version = "4", features = ["derive", "env"] }
 clap_complete = "4"
 clap_mangen = "0.2"
-handlebars = "5"
+handlebars = "6"
 dialoguer = "0.11"
 env_logger = "0.11"
 log = "0.4"
